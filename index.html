@@ -1,8 +1,28 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilates Studio</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 
 <style>
+/* ── VARIABILI CSS (Correzione per Chrome e Safari) ── */
+:root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f5f5f7;
+  --color-border-secondary: #e0e0e0;
+  --color-border-tertiary: #eeeeee;
+  --color-text-primary: #212121;
+  --color-text-secondary: #666666;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-primary); }
-.app { max-width: 420px; margin: 0 auto; padding: 0 0 80px; }
+body { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-primary); background-color: var(--color-background-secondary); }
+.app { max-width: 420px; margin: 0 auto; padding: 0 0 80px; background: var(--color-background-primary); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
 .topbar { background: #C2185B; color: #fff; padding: 14px 16px 10px; border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg); margin-bottom: 16px; }
 .topbar h1 { font-size: 16px; font-weight: 500; }
 .topbar p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
@@ -41,10 +61,14 @@ body { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-p
 .stat-val { font-size: 22px; font-weight: 500; }
 .stat-lbl { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
 .pink-val { color: #C2185B; }
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: flex-end; }
+
+/* ── MODIFICHE STRUTTURA MODALI (Centrate e Scorrevoli) ── */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center; padding: 16px; }
 .modal-bg.open { display: flex; }
-.modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0; padding: 20px 16px 32px; width: 100%; max-width: 420px; max-height: 85vh; overflow-y: auto; }
-.modal h2 { font-size: 15px; font-weight: 500; margin-bottom: 16px; }
+.modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); padding: 20px 16px; width: 100%; max-width: 420px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+.modal h2 { font-size: 15px; font-weight: 500; }
+.modal-scroll-area { flex: 1; overflow-y: auto; margin: 8px 0; padding-right: 4px; }
+
 .alert-info { background: #E3F2FD; color: #1565C0; padding: 10px 12px; border-radius: var(--border-radius-md); font-size: 12px; margin-bottom: 10px; }
 .search-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 10px; }
 .search-bar input { border: none; background: none; flex: 1; font-size: 13px; outline: none; color: var(--color-text-primary); }
@@ -59,6 +83,8 @@ body { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-p
 .export-box h3 { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
 .export-box p { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 12px; line-height: 1.5; }
 </style>
+</head>
+<body>
 
 <div class="app">
 <div class="topbar">
@@ -173,52 +199,57 @@ body { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-p
 
 <div class="modal-bg" id="modal-sessione">
   <div class="modal">
-    <div class="row-between" style="margin-bottom:16px">
+    <div class="row-between" style="margin-bottom:12px">
       <h2 style="margin:0">Prenota partecipanti</h2>
       <button class="btn-ghost" onclick="closeModal('modal-sessione')"><i class="ti ti-x" style="font-size:20px" aria-hidden="true"></i></button>
     </div>
-    <div id="modal-session-info" style="margin-bottom:14px"></div>
-    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px">SELEZIONA PARTECIPANTI</div>
-    <div id="modal-participants" class="participants-list"></div>
+    <div class="modal-scroll-area">
+      <div id="modal-session-info" style="margin-bottom:14px"></div>
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px">SELEZIONA PARTECIPANTI</div>
+      <div id="modal-participants" class="participants-list"></div>
+    </div>
     <div class="divider"></div>
-    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="confermaPrenotazione()">Conferma e scala lezioni</button>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="confermaPrenotazione()">Conferma e scala lezioni</button>
   </div>
 </div>
 
 <div class="modal-bg" id="modal-nuova-sessione">
   <div class="modal">
-    <div class="row-between" style="margin-bottom:16px">
+    <div class="row-between" style="margin-bottom:12px">
       <h2 style="margin:0">Nuova sessione</h2>
       <button class="btn-ghost" onclick="closeModal('modal-nuova-sessione')"><i class="ti ti-x" style="font-size:20px" aria-hidden="true"></i></button>
     </div>
-    <div class="input-group"><label>Data</label><input type="date" id="ns-data"></div>
-    <div class="input-group"><label>Orario</label>
-      <select id="ns-orario">
-        <option>09:00–10:00</option><option>10:00–11:00</option><option>11:00–12:00</option>
-        <option>12:00–13:00</option><option>13:00–14:00</option><option>14:00–15:00</option>
-        <option>15:00–16:00</option><option>16:00–17:00</option><option>17:00–18:00</option>
-        <option>18:00–19:00</option><option>19:00–20:00</option><option>19:30–20:30</option>
-        <option>20:00–21:00</option><option>20:30–21:30</option>
-      </select>
+    <div class="modal-scroll-area">
+      <div class="input-group"><label>Data</label><input type="date" id="ns-data"></div>
+      <div class="input-group"><label>Orario</label>
+        <select id="ns-orario">
+          <option>09:00–10:00</option><option>10:00–11:00</option><option>11:00–12:00</option>
+          <option>12:00–13:00</option><option>13:00–14:00</option><option>14:00–15:00</option>
+          <option>15:00–16:00</option><option>16:00–17:00</option><option>17:00–18:00</option>
+          <option>18:00–19:00</option><option>19:00–20:00</option><option>19:30–20:30</option>
+          <option>20:00–21:00</option><option>20:30–21:30</option>
+        </select>
+      </div>
+      <div class="input-group"><label>Tipo corso</label>
+        <select id="ns-tipo"><option>Reformer</option><option>Reformer Base</option><option>Reformer Int.</option><option>Matwork</option><option>Privata</option></select>
+      </div>
+      <div class="input-group"><label>Istruttrice</label>
+        <select id="ns-istr"><option>Francesca</option><option>Greta</option><option>Roberto</option><option>Cris</option><option>Samuela</option><option>Alessia</option></select>
+      </div>
+      <div class="input-group"><label>Note</label><input type="text" id="ns-note" placeholder="Opzionale"></div>
     </div>
-    <div class="input-group"><label>Tipo corso</label>
-      <select id="ns-tipo"><option>Reformer</option><option>Reformer Base</option><option>Reformer Int.</option><option>Matwork</option><option>Privata</option></select>
-    </div>
-    <div class="input-group"><label>Istruttrice</label>
-      <select id="ns-istr"><option>Francesca</option><option>Greta</option><option>Roberto</option><option>Cris</option><option>Samuela</option><option>Alessia</option></select>
-    </div>
-    <div class="input-group"><label>Note</label><input type="text" id="ns-note" placeholder="Opzionale"></div>
+    <div class="divider"></div>
     <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="creaNuovaSessione()">Crea sessione</button>
   </div>
 </div>
 
 <div class="modal-bg" id="modal-iscritta">
   <div class="modal">
-    <div class="row-between" style="margin-bottom:14px">
+    <div class="row-between" style="margin-bottom:12px">
       <h2 style="margin:0" id="mi-nome"></h2>
       <button class="btn-ghost" onclick="closeModal('modal-iscritta')"><i class="ti ti-x" style="font-size:20px" aria-hidden="true"></i></button>
     </div>
-    <div id="mi-content"></div>
+    <div class="modal-scroll-area" id="mi-content"></div>
   </div>
 </div>
 
@@ -249,7 +280,7 @@ let iscritte = [
   {id:18,nome:"Beatrice D'Ambrosio",pacchetto:"Reformer (10+3)",pagamento:"Contanti",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
   {id:19,nome:"Beatrice Lanzuolo",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
   {id:20,nome:"Federica Colombo",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
-  {id:21,nome:"Raffaella Moruzzi",pacchetto:"Reformer (10+3)",pagamento:"Contanti",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
+  {id:21,nome:"Raffaella Moruzzi",pacchetto:"Contanti",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
   {id:22,nome:"Ilaria Aiello",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
   {id:23,nome:"Chiara Degli Esposti",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
   {id:24,nome:"Giulia Levati",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:290,lezTot:13,lezFatte:0,note:""},
@@ -362,7 +393,7 @@ function openIscritta(id){
     ${isc.note?`<tr><td style="color:var(--color-text-secondary);padding:4px 0">Note</td><td style="text-align:right">${isc.note}</td></tr>`:''}
   </table>`;
   if(sesSeg.length){ html+=`<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">ULTIME SESSIONI</div>`; sesSeg.forEach(s=>{ html+=`<div style="font-size:13px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary)">${formatDataShort(s.data)} · ${s.orario} · ${s.tipo}</div>`; }); }
-  html+=`<div class="divider"></div><div style="display:flex;gap:8px;margin-top:4px"><button class="btn" style="flex:1" onclick="modificaLez(${id},-1)"><i class="ti ti-minus" aria-hidden="true"></i> Lez.</button><button class="btn" style="flex:1" onclick="modificaLez(${id},+1)"><i class="ti ti-plus" aria-hidden="true"></i> Lez.</button></div>`;
+  html+=`<div class="divider"></div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn" style="flex:1" onclick="modificaLez(${id},-1)"><i class="ti ti-minus" aria-hidden="true"></i> Lez.</button><button class="btn" style="flex:1" onclick="modificaLez(${id},+1)"><i class="ti ti-plus" aria-hidden="true"></i> Lez.</button></div>`;
   document.getElementById('mi-content').innerHTML=html;
   document.getElementById('modal-iscritta').classList.add('open');
 }
@@ -589,3 +620,5 @@ document.getElementById('topbar-date').textContent=now.toLocaleDateString('it-IT
 document.getElementById('top-incasso').textContent='€'+iscritte.reduce((a,i)=>a+i.pagato,0).toLocaleString('it-IT');
 renderDashboard();
 </script>
+</body>
+</html>
