@@ -1,0 +1,591 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); font-size: 14px; color: var(--color-text-primary); }
+.app { max-width: 420px; margin: 0 auto; padding: 0 0 80px; }
+.topbar { background: #C2185B; color: #fff; padding: 14px 16px 10px; border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg); margin-bottom: 16px; }
+.topbar h1 { font-size: 16px; font-weight: 500; }
+.topbar p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.tabs { display: flex; gap: 4px; padding: 0 12px; margin-bottom: 16px; }
+.tab { flex: 1; padding: 8px 4px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); font-size: 11px; font-weight: 500; cursor: pointer; text-align: center; color: var(--color-text-secondary); transition: all 0.15s; }
+.tab.active { background: #C2185B; color: #fff; border-color: #C2185B; }
+.section { display: none; padding: 0 12px; }
+.section.active { display: block; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; margin-bottom: 10px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.card-name { font-size: 14px; font-weight: 500; }
+.badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
+.badge-ok { background: #E8F5E9; color: #2E7D32; }
+.badge-warn { background: #FFF8E1; color: #F57F17; }
+.badge-danger { background: #FFEBEE; color: #C62828; }
+.badge-blue { background: #E3F2FD; color: #1565C0; }
+.meta { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
+.prog-bar { height: 6px; background: var(--color-background-secondary); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.row-between { display: flex; justify-content: space-between; align-items: center; }
+.btn { padding: 8px 16px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--color-text-primary); }
+.btn-primary { background: #C2185B; color: #fff; border-color: #C2185B; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-ghost { border: none; background: none; padding: 4px; cursor: pointer; color: var(--color-text-secondary); }
+.btn-green { background: #2E7D32; color: #fff; border-color: #2E7D32; }
+.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 10px 0; }
+.session-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; margin-bottom: 10px; }
+.session-title { font-size: 14px; font-weight: 500; margin: 3px 0 6px; }
+.chip { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--color-background-secondary); color: var(--color-text-secondary); margin: 2px 2px 0 0; }
+.chip-present { background: #E8F5E9; color: #2E7D32; }
+.input-group { margin-bottom: 12px; }
+.input-group label { display: block; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; font-weight: 500; }
+.input-group input, .input-group select { width: 100%; padding: 8px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; background: var(--color-background-primary); color: var(--color-text-primary); }
+.stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-bottom: 14px; }
+.stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; }
+.stat-val { font-size: 22px; font-weight: 500; }
+.stat-lbl { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+.pink-val { color: #C2185B; }
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: flex-end; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0; padding: 20px 16px 32px; width: 100%; max-width: 420px; max-height: 85vh; overflow-y: auto; }
+.modal h2 { font-size: 15px; font-weight: 500; margin-bottom: 16px; }
+.alert-info { background: #E3F2FD; color: #1565C0; padding: 10px 12px; border-radius: var(--border-radius-md); font-size: 12px; margin-bottom: 10px; }
+.search-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 10px; }
+.search-bar input { border: none; background: none; flex: 1; font-size: 13px; outline: none; color: var(--color-text-primary); }
+.day-header { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 0 4px; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 8px; }
+.toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #2E7D32; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
+.toast.show { opacity: 1; }
+.participants-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.part-chip { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
+.part-chip.selected { background: #FCE4EC; border-color: #C2185B; color: #C2185B; font-weight: 500; }
+.empty-state { text-align: center; padding: 32px 16px; color: var(--color-text-secondary); font-size: 13px; }
+.export-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px; margin-bottom: 10px; }
+.export-box h3 { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.export-box p { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 12px; line-height: 1.5; }
+</style>
+
+<div class="app">
+<div class="topbar">
+  <div class="row-between">
+    <div>
+      <h1><i class="ti ti-heart" aria-hidden="true"></i> Pilates Studio</h1>
+      <p id="topbar-date"></p>
+    </div>
+    <div style="text-align:right">
+      <div id="top-incasso" style="font-size:18px;font-weight:500"></div>
+      <div style="font-size:11px;opacity:0.7">incassato</div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('dashboard')"><i class="ti ti-chart-bar" aria-hidden="true"></i><br>Home</div>
+  <div class="tab" onclick="showTab('iscritte')"><i class="ti ti-users" aria-hidden="true"></i><br>Iscritte</div>
+  <div class="tab" onclick="showTab('sessioni')"><i class="ti ti-calendar" aria-hidden="true"></i><br>Sessioni</div>
+  <div class="tab" onclick="showTab('nuova')"><i class="ti ti-plus" aria-hidden="true"></i><br>Nuova</div>
+  <div class="tab" onclick="showTab('esporta')"><i class="ti ti-download" aria-hidden="true"></i><br>Export</div>
+</div>
+
+<div class="section active" id="tab-dashboard">
+  <div class="stat-grid">
+    <div class="stat"><div class="stat-val pink-val" id="d-tot-isc">0</div><div class="stat-lbl">Iscritte</div></div>
+    <div class="stat"><div class="stat-val" id="d-rinnovo" style="color:#F57F17">0</div><div class="stat-lbl">Da rinnovare</div></div>
+    <div class="stat"><div class="stat-val" style="color:#C62828" id="d-saldo">€0</div><div class="stat-lbl">Da saldare</div></div>
+    <div class="stat"><div class="stat-val" id="d-sessioni-oggi" style="color:#1565C0">0</div><div class="stat-lbl">Sessioni oggi</div></div>
+  </div>
+  <div class="card" style="margin-bottom:10px">
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px">ATTENZIONE</div>
+    <div id="alerts-list"></div>
+  </div>
+  <div class="card">
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px">SESSIONI OGGI</div>
+    <div id="today-sessions"></div>
+  </div>
+</div>
+
+<div class="section" id="tab-iscritte">
+  <div class="search-bar">
+    <i class="ti ti-search" style="font-size:16px;color:var(--color-text-secondary)" aria-hidden="true"></i>
+    <input type="text" id="search-isc" placeholder="Cerca iscritta..." oninput="renderIscritte()">
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:12px">
+    <button class="btn btn-sm" id="f-tutte" onclick="setFilter('tutte')" style="background:#C2185B;color:#fff;border-color:#C2185B">Tutte</button>
+    <button class="btn btn-sm" id="f-rinnovo" onclick="setFilter('rinnovo')">Da rinnovare</button>
+    <button class="btn btn-sm" id="f-saldo" onclick="setFilter('saldo')">Da saldare</button>
+  </div>
+  <div id="iscritte-list"></div>
+</div>
+
+<div class="section" id="tab-sessioni">
+  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+    <button class="btn btn-sm" id="sv-future" onclick="setSessionView('future')" style="background:#C2185B;color:#fff;border-color:#C2185B">Prossime</button>
+    <button class="btn btn-sm" id="sv-past" onclick="setSessionView('past')">Passate</button>
+    <button class="btn btn-sm btn-primary" onclick="openNuovaSessione()" style="margin-left:auto">+ Sessione</button>
+  </div>
+  <div id="sessioni-list"></div>
+</div>
+
+<div class="section" id="tab-nuova">
+  <div class="card">
+    <div style="font-size:13px;font-weight:500;margin-bottom:14px"><i class="ti ti-user-plus" aria-hidden="true"></i> Nuova iscritta</div>
+    <div class="input-group"><label>Nome e cognome</label><input type="text" id="n-nome" placeholder="Es. Giulia Rossi"></div>
+    <div class="input-group"><label>Pacchetto</label>
+      <select id="n-pacchetto">
+        <option>Reformer (10+3) — €310</option>
+        <option>Mat (10+3) — €180</option>
+        <option>Mat+Reformer (10+3 cad.) — €470</option>
+        <option>Reformer (5) — €165</option>
+        <option>Mat (5) — €95</option>
+        <option>Privata — €500</option>
+      </select>
+    </div>
+    <div class="input-group"><label>Tipo pagamento</label>
+      <select id="n-pagamento"><option>Bonifico</option><option>Contanti</option><option>Carta</option><option>Da saldare</option></select>
+    </div>
+    <div class="input-group"><label>Quota (€)</label><input type="number" id="n-quota" placeholder="310"></div>
+    <div class="input-group"><label>Pagato (€)</label><input type="number" id="n-pagato" placeholder="310"></div>
+    <div class="input-group"><label>Lezioni totali</label><input type="number" id="n-lezioni" placeholder="13"></div>
+    <div class="input-group"><label>Note</label><input type="text" id="n-note" placeholder="Opzionale"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="aggiungiIscritta()">Aggiungi iscritta</button>
+  </div>
+</div>
+
+<div class="section" id="tab-esporta">
+  <div class="export-box">
+    <h3><i class="ti ti-table" aria-hidden="true"></i> Esporta tutto in Excel</h3>
+    <p>Scarica un file .xlsx con Dashboard, Iscritte, Sessioni e riepilogo pagamenti — aggiornato con i dati attuali dell'app.</p>
+    <button class="btn btn-green" style="width:100%" id="btn-export" onclick="esportaExcel()">
+      <i class="ti ti-download" aria-hidden="true"></i> Scarica Excel completo
+    </button>
+  </div>
+  <div class="export-box">
+    <h3><i class="ti ti-users" aria-hidden="true"></i> Solo iscritte</h3>
+    <p>Esporta solo l'elenco iscritte con lezioni e pagamenti.</p>
+    <button class="btn btn-sm" style="width:100%" onclick="esportaSoloIscritte()">
+      <i class="ti ti-download" aria-hidden="true"></i> Scarica iscritte.xlsx
+    </button>
+  </div>
+  <div class="export-box">
+    <h3><i class="ti ti-calendar" aria-hidden="true"></i> Solo sessioni</h3>
+    <p>Esporta il calendario sessioni con i partecipanti.</p>
+    <button class="btn btn-sm" style="width:100%" onclick="esportaSoloSessioni()">
+      <i class="ti ti-download" aria-hidden="true"></i> Scarica sessioni.xlsx
+    </button>
+  </div>
+</div>
+</div>
+
+<div class="modal-bg" id="modal-sessione">
+  <div class="modal">
+    <div class="row-between" style="margin-bottom:16px">
+      <h2 style="margin:0">Prenota partecipanti</h2>
+      <button class="btn-ghost" onclick="closeModal('modal-sessione')"><i class="ti ti-x" style="font-size:20px" aria-hidden="true"></i></button>
+    </div>
+    <div id="modal-session-info" style="margin-bottom:14px"></div>
+    <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px">SELEZIONA PARTECIPANTI</div>
+    <div id="modal-participants" class="participants-list"></div>
+    <div class="divider"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="confermaPrenotazione()">Conferma e scala lezioni</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-nuova-sessione">
+  <div class="modal">
+    <div class="row-between" style="margin-bottom:16px">
+      <h2 style="margin:0">Nuova sessione</h2>
+      <button class="btn-ghost" onclick="closeModal('modal-nuova-sessione')"><i class="ti ti-x" style="font-size:20px" aria-hidden="true"></i></button>
+    </div>
+    <div class="input-group"><label>Data</label><input type="date" id="ns-data"></div>
+    <div class="input-group"><label>Orario</label>
+      <select id="ns-orario">
+        <option>09:00–10:00</option><option>10:00–11:00</option><option>11:00–12:00</option>
+        <option>12:00–13:00</option><option>13:00–14:00</option><option>14:00–15:00</option>
+        <option>15:00–16:00</option><option>16:00–17:00</option><option>17:00–18:00</option>
+        <option>18:00–19:00</option><option>19:00–20:00</option><option>19:30–20:30</option>
+        <option>20:00–21:00</option><option>20:30–21:30</option>
+      </select>
+    </div>
+    <div class="input-group"><label>Tipo corso</label>
+      <select id="ns-tipo"><option>Reformer</option><option>Reformer Base</option><option>Reformer Int.</option><option>Matwork</option><option>Privata</option></select>
+    </div>
+    <div class="input-group"><label>Istruttrice</label>
+      <select id="ns-istr"><option>Francesca</option><option>Greta</option><option>Roberto</option><option>Cris</option><option>Samuela</option><option>Alessia</option></select>
+    </div>
+    <div class="input-group"><label>Note</label><input type="text" id="ns-note" placeholder="Opzionale"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="creaNuovaSessione()">Crea sessione</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-iscritta">
+  <div class="modal">
+    <div class="row-between" style="margin-bottom:14px">
+      <h2 style="margin:0" id="mi-nome"></h2>
+      <button class="btn-ghost" onclick="closeModal('modal-iscritta')"><i class="ti ti-x" style="font-size:20px" aria-hidden="true"></i></button>
+    </div>
+    <div id="mi-content"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const oggi = new Date(); oggi.setHours(0,0,0,0);
+
+let iscritte = [
+  {id:1,nome:"Giorgia Scarafiotti",pacchetto:"Reformer (10+3)",pagamento:"Contanti",quota:310,pagato:310,lezTot:13,lezFatte:3,note:""},
+  {id:2,nome:"Benedetta Senin",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:3,nome:"Martina Cigolini",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:4,nome:"Miriam Ummarino",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:3,note:""},
+  {id:5,nome:"Megi Mydin",pacchetto:"Reformer (10+3)",pagamento:"Contanti",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:6,nome:"Anna Sanvito",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:2,note:""},
+  {id:7,nome:"Giorgia Di Tata",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:8,nome:"Elisabetta Perotti",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:2,note:""},
+  {id:9,nome:"Serena Confalonieri",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:3,note:""},
+  {id:10,nome:"Valeria Marconcini",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
+  {id:11,nome:"Eva Casadei Lucchi",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:290,pagato:290,lezTot:13,lezFatte:0,note:"Quota ridotta"},
+  {id:12,nome:"Roberta Baioni",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:13,nome:"Ando Giuseppa",pacchetto:"Mat+Reformer (10+3 cad.)",pagamento:"Bonifico",quota:470,pagato:470,lezTot:26,lezFatte:2,note:""},
+  {id:14,nome:"Anita Mattavelli",pacchetto:"Mat (10+3)",pagamento:"Bonifico",quota:180,pagato:180,lezTot:13,lezFatte:1,note:""},
+  {id:15,nome:"Nicoletta De Brita",pacchetto:"Mat (10+3)",pagamento:"Bonifico",quota:180,pagato:180,lezTot:13,lezFatte:1,note:""},
+  {id:16,nome:"Luisa Mambretti",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:17,nome:"Laura Ferron",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:18,nome:"Beatrice D'Ambrosio",pacchetto:"Reformer (10+3)",pagamento:"Contanti",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:19,nome:"Beatrice Lanzuolo",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:20,nome:"Federica Colombo",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:1,note:""},
+  {id:21,nome:"Raffaella Moruzzi",pacchetto:"Reformer (10+3)",pagamento:"Contanti",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
+  {id:22,nome:"Ilaria Aiello",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
+  {id:23,nome:"Chiara Degli Esposti",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
+  {id:24,nome:"Giulia Levati",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:290,lezTot:13,lezFatte:0,note:""},
+  {id:25,nome:"Laura Abiuso",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
+  {id:26,nome:"Martina Lanzuolo",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:326,pagato:326,lezTot:13,lezFatte:0,note:""},
+  {id:27,nome:"Gabriella Origano",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:450,pagato:450,lezTot:13,lezFatte:0,note:""},
+  {id:28,nome:"Chiara Calzolaro",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:360,pagato:360,lezTot:13,lezFatte:0,note:""},
+  {id:29,nome:"Laura Bortolotti",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
+  {id:30,nome:"Valentina Sala",pacchetto:"Reformer (10+3)",pagamento:"Bonifico",quota:310,pagato:310,lezTot:13,lezFatte:0,note:""},
+  {id:31,nome:"Monica Zordan",pacchetto:"Privata",pagamento:"Contanti",quota:500,pagato:500,lezTot:10,lezFatte:0,note:"Lezioni private"},
+  {id:32,nome:"Chiara Della Corte",pacchetto:"Mat (10+3)",pagamento:"Contanti",quota:160,pagato:160,lezTot:13,lezFatte:0,note:""},
+];
+
+let sessioni = [
+  {id:1,data:"2026-06-16",orario:"09:00–10:00",tipo:"Reformer",istr:"Francesca",partecipanti:[6,5],note:""},
+  {id:2,data:"2026-06-16",orario:"10:00–11:00",tipo:"Reformer",istr:"Francesca",partecipanti:[7,4],note:""},
+  {id:3,data:"2026-06-17",orario:"19:30–20:30",tipo:"Reformer Base",istr:"Roberto",partecipanti:[30,19],note:""},
+  {id:4,data:"2026-06-17",orario:"20:30–21:30",tipo:"Reformer Int.",istr:"Roberto",partecipanti:[8,3,20,9],note:""},
+  {id:5,data:"2026-06-18",orario:"12:00–13:00",tipo:"Reformer",istr:"Greta",partecipanti:[12,16,17],note:""},
+  {id:6,data:"2026-06-19",orario:"14:00–15:00",tipo:"Matwork",istr:"Francesca",partecipanti:[13,7,15],note:""},
+  {id:7,data:"2026-06-20",orario:"09:30–10:30",tipo:"Reformer",istr:"Francesca",partecipanti:[13,11],note:""},
+  {id:8,data:"2026-06-23",orario:"19:00–20:00",tipo:"Reformer",istr:"Francesca",partecipanti:[6,9,4],note:""},
+];
+
+let nextId = {isc:33,ses:9};
+let currentFilter='tutte', sessionView='future', activeSession=null, selectedParticipants=[];
+
+const lezRim = i => Math.max(0, i.lezTot - i.lezFatte);
+const resto = i => i.quota - i.pagato;
+
+function showTab(t){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  const idx = ['dashboard','iscritte','sessioni','nuova','esporta'].indexOf(t);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  if(t==='dashboard') renderDashboard();
+  if(t==='iscritte') renderIscritte();
+  if(t==='sessioni') renderSessioni();
+}
+
+function setFilter(f){
+  currentFilter=f;
+  ['tutte','rinnovo','saldo'].forEach(x=>{
+    const b=document.getElementById('f-'+x);
+    const on=x===f;
+    b.style.background=on?'#C2185B':''; b.style.color=on?'#fff':''; b.style.borderColor=on?'#C2185B':'';
+  });
+  renderIscritte();
+}
+
+function setSessionView(v){
+  sessionView=v;
+  ['future','past'].forEach(x=>{
+    const b=document.getElementById('sv-'+x);
+    const on=x===v;
+    b.style.background=on?'#C2185B':''; b.style.color=on?'#fff':''; b.style.borderColor=on?'#C2185B':'';
+  });
+  renderSessioni();
+}
+
+function formatData(s){ return new Date(s+'T00:00:00').toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'}); }
+function formatDataShort(s){ return new Date(s+'T00:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'short'}); }
+
+function renderDashboard(){
+  const da=iscritte.filter(i=>lezRim(i)<=2&&i.lezTot>0);
+  const ds=iscritte.filter(i=>resto(i)>0);
+  const todaySes=sessioni.filter(s=>{ const d=new Date(s.data+'T00:00:00'); d.setHours(0,0,0,0); return d.getTime()===oggi.getTime(); });
+  document.getElementById('d-tot-isc').textContent=iscritte.length;
+  document.getElementById('d-rinnovo').textContent=da.length;
+  document.getElementById('d-saldo').textContent='€'+ds.reduce((a,i)=>a+resto(i),0).toFixed(0);
+  document.getElementById('d-sessioni-oggi').textContent=todaySes.length;
+  document.getElementById('top-incasso').textContent='€'+iscritte.reduce((a,i)=>a+i.pagato,0).toLocaleString('it-IT');
+  let html='';
+  da.slice(0,5).forEach(i=>{ html+=`<div class="row-between" style="padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary)"><span style="font-size:13px">${i.nome}</span><span class="badge ${lezRim(i)===0?'badge-danger':'badge-warn'}">${lezRim(i)} lez. rim.</span></div>`; });
+  ds.slice(0,3).forEach(i=>{ html+=`<div class="row-between" style="padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary)"><span style="font-size:13px">${i.nome}</span><span class="badge badge-danger">€${resto(i)} da saldare</span></div>`; });
+  if(!html) html='<div class="empty-state"><i class="ti ti-check" style="font-size:24px;color:#2E7D32" aria-hidden="true"></i><br>Tutto ok!</div>';
+  document.getElementById('alerts-list').innerHTML=html;
+  let html2='';
+  if(!todaySes.length){ html2='<div style="font-size:13px;color:var(--color-text-secondary);text-align:center;padding:12px">Nessuna sessione oggi</div>'; }
+  else { todaySes.forEach(s=>{ const nomi=s.partecipanti.map(id=>{ const i=iscritte.find(x=>x.id===id); return i?i.nome.split(' ')[0]:'?'; }); html2+=`<div style="padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary)"><div class="row-between"><span style="font-size:13px;font-weight:500">${s.tipo}</span><span style="font-size:12px;color:var(--color-text-secondary)">${s.orario}</span></div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">${nomi.join(', ')||'Nessuna prenotazione'}</div></div>`; }); }
+  document.getElementById('today-sessions').innerHTML=html2;
+}
+
+function renderIscritte(){
+  const q=(document.getElementById('search-isc').value||'').toLowerCase();
+  let list=iscritte.filter(i=>i.nome.toLowerCase().includes(q));
+  if(currentFilter==='rinnovo') list=list.filter(i=>lezRim(i)<=2);
+  if(currentFilter==='saldo') list=list.filter(i=>resto(i)>0);
+  if(!list.length){ document.getElementById('iscritte-list').innerHTML='<div class="empty-state">Nessun risultato</div>'; return; }
+  document.getElementById('iscritte-list').innerHTML=list.map(isc=>{
+    const rim=lezRim(isc), pct=isc.lezTot>0?Math.round((isc.lezFatte/isc.lezTot)*100):0, r=resto(isc);
+    const bc=rim===0?'badge-danger':(rim<=2?'badge-warn':'badge-ok'), fc=rim===0?'#C62828':(rim<=2?'#F57F17':'#2E7D32');
+    return `<div class="card" onclick="openIscritta(${isc.id})" style="cursor:pointer"><div class="card-header"><div class="card-name">${isc.nome}</div><span class="badge ${bc}">${rim} lez.</span></div><div class="meta">${isc.pacchetto} · ${isc.pagamento}</div>${r>0?`<div class="meta" style="color:#C62828;font-weight:500;margin-top:3px">Da saldare: €${r}</div>`:''}<div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${fc}"></div></div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:4px">${isc.lezFatte} / ${isc.lezTot} lezioni effettuate</div></div>`;
+  }).join('');
+}
+
+function openIscritta(id){
+  const isc=iscritte.find(x=>x.id===id); if(!isc) return;
+  document.getElementById('mi-nome').textContent=isc.nome;
+  const rim=lezRim(isc), r=resto(isc);
+  const sesSeg=sessioni.filter(s=>s.partecipanti.includes(id)).sort((a,b)=>a.data>b.data?-1:1).slice(0,5);
+  let html=`<div class="stat-grid" style="margin-bottom:14px"><div class="stat"><div class="stat-val pink-val">${rim}</div><div class="stat-lbl">Lezioni rim.</div></div><div class="stat"><div class="stat-val" style="color:${r>0?'#C62828':'#2E7D32'}">€${r>0?r:isc.pagato}</div><div class="stat-lbl">${r>0?'Da saldare':'Pagato'}</div></div></div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">DETTAGLI</div>
+  <table style="width:100%;font-size:13px;margin-bottom:14px">
+    <tr><td style="color:var(--color-text-secondary);padding:4px 0">Pacchetto</td><td style="text-align:right">${isc.pacchetto}</td></tr>
+    <tr><td style="color:var(--color-text-secondary);padding:4px 0">Pagamento</td><td style="text-align:right">${isc.pagamento}</td></tr>
+    <tr><td style="color:var(--color-text-secondary);padding:4px 0">Quota</td><td style="text-align:right">€${isc.quota}</td></tr>
+    <tr><td style="color:var(--color-text-secondary);padding:4px 0">Pagato</td><td style="text-align:right">€${isc.pagato}</td></tr>
+    ${isc.note?`<tr><td style="color:var(--color-text-secondary);padding:4px 0">Note</td><td style="text-align:right">${isc.note}</td></tr>`:''}
+  </table>`;
+  if(sesSeg.length){ html+=`<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">ULTIME SESSIONI</div>`; sesSeg.forEach(s=>{ html+=`<div style="font-size:13px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary)">${formatDataShort(s.data)} · ${s.orario} · ${s.tipo}</div>`; }); }
+  html+=`<div class="divider"></div><div style="display:flex;gap:8px;margin-top:4px"><button class="btn" style="flex:1" onclick="modificaLez(${id},-1)"><i class="ti ti-minus" aria-hidden="true"></i> Lez.</button><button class="btn" style="flex:1" onclick="modificaLez(${id},+1)"><i class="ti ti-plus" aria-hidden="true"></i> Lez.</button></div>`;
+  document.getElementById('mi-content').innerHTML=html;
+  document.getElementById('modal-iscritta').classList.add('open');
+}
+
+function modificaLez(id,delta){
+  const isc=iscritte.find(x=>x.id===id); if(!isc) return;
+  isc.lezFatte=Math.max(0,isc.lezFatte+delta);
+  showToast(delta>0?'+ 1 lezione aggiunta':'- 1 lezione rimossa');
+  openIscritta(id); renderDashboard();
+}
+
+function renderSessioni(){
+  const list=sessioni.filter(s=>{ const sd=new Date(s.data+'T00:00:00'); sd.setHours(0,0,0,0); return sessionView==='future'?sd>=oggi:sd<oggi; }).sort((a,b)=>sessionView==='future'?(a.data>b.data?1:-1):(a.data>b.data?-1:1));
+  if(!list.length){ document.getElementById('sessioni-list').innerHTML='<div class="empty-state">Nessuna sessione</div>'; return; }
+  let html='', lastData='';
+  list.forEach(s=>{
+    if(s.data!==lastData){ html+=`<div class="day-header">${formatData(s.data)}</div>`; lastData=s.data; }
+    const parts=s.partecipanti.map(id=>{ const isc=iscritte.find(x=>x.id===id); return isc?`<span class="chip chip-present">${isc.nome.split(' ')[0]}</span>`:''; }).join('');
+    const sd=new Date(s.data+'T00:00:00'); sd.setHours(0,0,0,0);
+    const isFuture=sd>=oggi;
+    html+=`<div class="session-card"><div class="row-between"><div><div class="session-title">${s.tipo}</div><div class="meta">${s.orario} · ${s.istr}</div></div>${isFuture?`<button class="btn btn-sm btn-primary" onclick="openPrenotazione(${s.id})"><i class="ti ti-user-plus" aria-hidden="true"></i></button>`:''}</div><div style="margin-top:8px">${parts||'<span style="font-size:12px;color:var(--color-text-secondary)">Nessuna prenotazione</span>'}</div></div>`;
+  });
+  document.getElementById('sessioni-list').innerHTML=html;
+}
+
+function openPrenotazione(sid){
+  activeSession=sessioni.find(s=>s.id===sid); if(!activeSession) return;
+  selectedParticipants=[...activeSession.partecipanti];
+  document.getElementById('modal-session-info').innerHTML=`<div class="alert-info"><strong>${activeSession.tipo}</strong> · ${activeSession.orario}<br>${formatData(activeSession.data)} · ${activeSession.istr}</div>`;
+  document.getElementById('modal-participants').innerHTML=iscritte.map(isc=>{
+    const rim=lezRim(isc), sel=selectedParticipants.includes(isc.id);
+    return `<div class="part-chip ${sel?'selected':''}" id="pc-${isc.id}" onclick="toggleParticipant(${isc.id})">${isc.nome.split(' ')[0]} ${isc.nome.split(' ').slice(1).join(' ')} <span style="opacity:0.6">(${rim})</span></div>`;
+  }).join('');
+  document.getElementById('modal-sessione').classList.add('open');
+}
+
+function toggleParticipant(id){
+  const isc=iscritte.find(x=>x.id===id); if(!isc) return;
+  const inSes=selectedParticipants.includes(id);
+  if(!inSes&&lezRim(isc)<=0){ showToast('Lezioni esaurite!',true); return; }
+  if(inSes){ selectedParticipants=selectedParticipants.filter(x=>x!==id); document.getElementById('pc-'+id).classList.remove('selected'); }
+  else { selectedParticipants.push(id); document.getElementById('pc-'+id).classList.add('selected'); }
+}
+
+function confermaPrenotazione(){
+  if(!activeSession) return;
+  const prev=activeSession.partecipanti;
+  const aggiunti=selectedParticipants.filter(id=>!prev.includes(id));
+  const rimossi=prev.filter(id=>!selectedParticipants.includes(id));
+  aggiunti.forEach(id=>{ const isc=iscritte.find(x=>x.id===id); if(isc) isc.lezFatte++; });
+  rimossi.forEach(id=>{ const isc=iscritte.find(x=>x.id===id); if(isc&&isc.lezFatte>0) isc.lezFatte--; });
+  activeSession.partecipanti=[...selectedParticipants];
+  closeModal('modal-sessione');
+  showToast(`Salvato · ${aggiunti.length} nuove prenotazioni`);
+  renderSessioni(); renderDashboard();
+}
+
+function openNuovaSessione(){
+  document.getElementById('ns-data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('modal-nuova-sessione').classList.add('open');
+}
+
+function creaNuovaSessione(){
+  const data=document.getElementById('ns-data').value;
+  if(!data){ showToast('Inserisci una data',true); return; }
+  sessioni.push({id:nextId.ses++,data,orario:document.getElementById('ns-orario').value,tipo:document.getElementById('ns-tipo').value,istr:document.getElementById('ns-istr').value,partecipanti:[],note:document.getElementById('ns-note').value});
+  closeModal('modal-nuova-sessione'); showToast('Sessione creata!'); renderSessioni();
+}
+
+function aggiungiIscritta(){
+  const nome=document.getElementById('n-nome').value.trim();
+  if(!nome){ showToast('Inserisci il nome',true); return; }
+  iscritte.push({id:nextId.isc++,nome,pacchetto:document.getElementById('n-pacchetto').value,pagamento:document.getElementById('n-pagamento').value,quota:parseFloat(document.getElementById('n-quota').value)||0,pagato:parseFloat(document.getElementById('n-pagato').value)||0,lezTot:parseInt(document.getElementById('n-lezioni').value)||13,lezFatte:0,note:document.getElementById('n-note').value});
+  ['n-nome','n-quota','n-pagato','n-lezioni','n-note'].forEach(id=>document.getElementById(id).value='');
+  showToast(nome+' aggiunta!'); showTab('iscritte');
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg,warn=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=warn?'#E65100':'#2E7D32';
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+// ── EXPORT FUNCTIONS ──────────────────────────────────────────────────────────
+
+function stileHeader(ws, range, color){
+  for(let C=range.s.c; C<=range.e.c; C++){
+    const addr = XLSX.utils.encode_cell({r:range.s.r, c:C});
+    if(!ws[addr]) continue;
+    ws[addr].s = {
+      font: {bold:true, color:{rgb:'FFFFFF'}, name:'Arial', sz:10},
+      fill: {fgColor:{rgb:color}, patternType:'solid'},
+      alignment: {horizontal:'center', vertical:'center', wrapText:true},
+      border: {top:{style:'thin',color:{rgb:'FFFFFF'}},bottom:{style:'thin',color:{rgb:'FFFFFF'}},left:{style:'thin',color:{rgb:'FFFFFF'}},right:{style:'thin',color:{rgb:'FFFFFF'}}}
+    };
+  }
+}
+
+function stileCella(ws, addr, opts={}){
+  if(!ws[addr]) return;
+  ws[addr].s = {
+    font: {name:'Arial', sz:10, bold:opts.bold||false, color:{rgb:opts.color||'000000'}},
+    fill: opts.bg ? {fgColor:{rgb:opts.bg}, patternType:'solid'} : {patternType:'none'},
+    alignment: {horizontal:opts.align||'left', vertical:'center', wrapText:true},
+    border: {top:{style:'thin',color:{rgb:'E0E0E0'}},bottom:{style:'thin',color:{rgb:'E0E0E0'}},left:{style:'thin',color:{rgb:'E0E0E0'}},right:{style:'thin',color:{rgb:'E0E0E0'}}}
+  };
+  if(opts.numFmt) ws[addr].z = opts.numFmt;
+}
+
+function buildFoglioIscritte(){
+  const headers = ['Nome e Cognome','Pacchetto','Tipo Pagamento','Quota (€)','Pagato (€)','Resto (€)','Lezioni Totali','Lezioni Fatte','Lezioni Rimanenti','Note / Stato'];
+  const rows = iscritte.map(isc => [
+    isc.nome, isc.pacchetto, isc.pagamento,
+    isc.quota, isc.pagato, resto(isc),
+    isc.lezTot, isc.lezFatte, lezRim(isc),
+    isc.note
+  ]);
+  const data = [headers, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{wch:28},{wch:28},{wch:16},{wch:12},{wch:12},{wch:12},{wch:14},{wch:14},{wch:16},{wch:30}];
+  stileHeader(ws, {s:{r:0,c:0},e:{r:0,c:9}}, 'C2185B');
+  rows.forEach((_,i)=>{
+    const r=i+1, bg=i%2===0?'FCE4EC':'FFFFFF';
+    headers.forEach((_,c)=>{
+      const addr=XLSX.utils.encode_cell({r,c});
+      const isEuro=[3,4,5].includes(c), isNum=[6,7,8].includes(c);
+      stileCella(ws, addr, {bg, numFmt: isEuro?'€#,##0.00':(isNum?'0':undefined), align: (isEuro||isNum)?'center':'left',
+        color: c===5&&resto(iscritte[i])>0?'C62828':(c===8&&lezRim(iscritte[i])<=2?'C62828':'000000'),
+        bold: (c===5&&resto(iscritte[i])>0)||(c===8&&lezRim(iscritte[i])<=2)
+      });
+    });
+  });
+  return ws;
+}
+
+function buildFoglioSessioni(){
+  const headers = ['Data','Orario','Tipo','Istruttrice','Partecipante 1','Partecipante 2','Partecipante 3','Partecipante 4','Note'];
+  const rows = sessioni.sort((a,b)=>a.data>b.data?1:-1).map(s=>{
+    const nomi = s.partecipanti.map(id=>{ const isc=iscritte.find(x=>x.id===id); return isc?isc.nome:''; });
+    return [s.data.split('-').reverse().join('/'), s.orario, s.tipo, s.istr, nomi[0]||'', nomi[1]||'', nomi[2]||'', nomi[3]||'', s.note];
+  });
+  const ws = XLSX.utils.aoa_to_sheet([headers,...rows]);
+  ws['!cols'] = [{wch:14},{wch:14},{wch:18},{wch:14},{wch:26},{wch:26},{wch:26},{wch:26},{wch:20}];
+  stileHeader(ws, {s:{r:0,c:0},e:{r:0,c:8}}, '7B1FA2');
+  rows.forEach((_,i)=>{
+    const bg=i%2===0?'F3E5F5':'FFFFFF';
+    for(let c=0;c<9;c++) stileCella(ws, XLSX.utils.encode_cell({r:i+1,c}), {bg});
+  });
+  return ws;
+}
+
+function buildFoglioDashboard(){
+  const totIscritte = iscritte.length;
+  const daRinnovare = iscritte.filter(i=>lezRim(i)<=2&&i.lezTot>0).length;
+  const daSaldare = iscritte.filter(i=>resto(i)>0);
+  const totDaSaldare = daSaldare.reduce((a,i)=>a+resto(i),0);
+  const totIncassato = iscritte.reduce((a,i)=>a+i.pagato,0);
+  const totSessioni = sessioni.length;
+  const data = [
+    ['RIEPILOGO PILATES STUDIO',''],
+    ['',''],
+    ['ISCRITTE',''],
+    ['Iscritte totali', totIscritte],
+    ['Da rinnovare (≤2 lezioni)', daRinnovare],
+    ['Con saldo aperto', daSaldare.length],
+    ['Totale da saldare (€)', totDaSaldare],
+    ['Totale incassato (€)', totIncassato],
+    ['',''],
+    ['SESSIONI',''],
+    ['Sessioni totali registrate', totSessioni],
+    ['',''],
+    ['ISCRITTE CON SALDO APERTO',''],
+    ['Nome','Resto (€)'],
+    ...daSaldare.map(i=>[i.nome, resto(i)]),
+    ['',''],
+    ['ISCRITTE DA RINNOVARE',''],
+    ['Nome','Lezioni rimanenti'],
+    ...iscritte.filter(i=>lezRim(i)<=2&&i.lezTot>0).map(i=>[i.nome, lezRim(i)])
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{wch:36},{wch:20}];
+  const addr0 = XLSX.utils.encode_cell({r:0,c:0});
+  ws[addr0].s = {font:{bold:true,sz:14,name:'Arial',color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'C2185B'},patternType:'solid'},alignment:{horizontal:'center'}};
+  return ws;
+}
+
+function esportaExcel(){
+  const btn=document.getElementById('btn-export');
+  btn.textContent='Generazione in corso...'; btn.disabled=true;
+  setTimeout(()=>{
+    try {
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, buildFoglioDashboard(), 'Dashboard');
+      XLSX.utils.book_append_sheet(wb, buildFoglioIscritte(), 'Iscritte');
+      XLSX.utils.book_append_sheet(wb, buildFoglioSessioni(), 'Sessioni');
+      const ts = new Date().toLocaleDateString('it-IT').replace(/\//g,'-');
+      XLSX.writeFile(wb, `PilatesStudio_${ts}.xlsx`, {bookType:'xlsx', type:'binary', cellStyles:true});
+      showToast('Excel scaricato!');
+    } catch(e) { showToast('Errore export',true); }
+    btn.innerHTML='<i class="ti ti-download"></i> Scarica Excel completo'; btn.disabled=false;
+  }, 100);
+}
+
+function esportaSoloIscritte(){
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, buildFoglioIscritte(), 'Iscritte');
+  XLSX.writeFile(wb, 'iscritte.xlsx', {bookType:'xlsx',type:'binary',cellStyles:true});
+  showToast('iscritte.xlsx scaricato!');
+}
+
+function esportaSoloSessioni(){
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, buildFoglioSessioni(), 'Sessioni');
+  XLSX.writeFile(wb, 'sessioni.xlsx', {bookType:'xlsx',type:'binary',cellStyles:true});
+  showToast('sessioni.xlsx scaricato!');
+}
+
+const now=new Date();
+document.getElementById('topbar-date').textContent=now.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+document.getElementById('top-incasso').textContent='€'+iscritte.reduce((a,i)=>a+i.pagato,0).toLocaleString('it-IT');
+renderDashboard();
+</script>
